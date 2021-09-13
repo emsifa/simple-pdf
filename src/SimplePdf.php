@@ -11,6 +11,8 @@ class SimplePdf
     const STATE_END_PAGE = 1;
     const STATE_END_DOCUMENT = 3;
 
+    const STYLE_BOLD = 'B';
+
     protected $page;                    // current page number
     protected $objectNumber;            // current object number
     protected $offsets;                 // array of object offsets
@@ -69,6 +71,7 @@ class SimplePdf
     protected $layoutMode;              // layout display mode
     protected $metadata;                // document properties
     protected $pdfVersion;              // PDF version number
+    protected $producer = "SimplePDF";
 
     public function __construct($orientation = 'P', $unit = 'mm', $size = 'A4')
     {
@@ -261,7 +264,7 @@ class SimplePdf
 
     public function error($msg)
     {
-        throw new Exception('FPDF error: ' . $msg);
+        throw new Exception('SimplePDF Error: ' . $msg);
     }
 
     public function close()
@@ -441,7 +444,7 @@ class SimplePdf
         if ($style == 'F') {
             $op = 'f';
         } elseif ($style == 'FD' || $style == 'DF') {
-            $op = 'B';
+            $op = static::STYLE_BOLD;
         } else {
             $op = 'S';
         }
@@ -617,7 +620,7 @@ class SimplePdf
         $s = '';
         if ($fill || $border == 1) {
             if ($fill) {
-                $op = ($border == 1) ? 'B' : 'f';
+                $op = ($border == 1) ? static::STYLE_BOLD : 'f';
             } else {
                 $op = 'S';
             }
@@ -635,7 +638,7 @@ class SimplePdf
             if (strpos($border, 'R') !== false) {
                 $s .= sprintf('%.2F %.2F m %.2F %.2F l S ', ($x + $w) * $k, ($this->height - $y) * $k, ($x + $w) * $k, ($this->height - ($y + $h)) * $k);
             }
-            if (strpos($border, 'B') !== false) {
+            if (strpos($border, static::STYLE_BOLD) !== false) {
                 $s .= sprintf('%.2F %.2F m %.2F %.2F l S ', $x * $k, ($this->height - ($y + $h)) * $k, ($x + $w) * $k, ($this->height - ($y + $h)) * $k);
             }
         }
@@ -781,8 +784,8 @@ class SimplePdf
             $this->wordSpacing = 0;
             $this->_out('0 Tw');
         }
-        if ($border && strpos($border, 'B') !== false) {
-            $b .= 'B';
+        if ($border && strpos($border, static::STYLE_BOLD) !== false) {
+            $b .= static::STYLE_BOLD;
         }
         $this->cell($w, $h, substr($s, $j, $i - $j), $b, 2, $align, $fill);
         $this->x = $this->leftMargin;
@@ -1017,6 +1020,7 @@ class SimplePdf
 
     public function download(string $name, bool $isUTF8 = false)
     {
+        $this->close();
         $this->_checkoutput();
         header('Content-Type: application/x-download');
         header('Content-Disposition: attachment; ' . $this->_httpencode('filename', $name, $isUTF8));
@@ -1027,7 +1031,8 @@ class SimplePdf
 
     public function save(string $name)
     {
-        if (!file_put_contents($name, $this->buffer)) {
+        $this->close();
+        if (! file_put_contents($name, $this->buffer)) {
             $this->error('Unable to create output file: ' . $name);
         }
     }
