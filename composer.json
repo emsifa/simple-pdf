@@ -14,7 +14,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Emsifa\\PdfMaker\\": "src/"
+            "Emsifa\\SimplePdf\\": "src/"
         }
     },
     "require": {
