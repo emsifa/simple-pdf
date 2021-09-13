@@ -6,3 +6,13 @@ I made this modification for my personal use.
 The goal is to provide cleaner codebase, better APIs, and better support for PHP 8.
 Currently I don't have plan to add new features on this. 
 Use it with your own risk.
+
+## Installation
+
+```bash
+composer require emsifa/simple-pdf:dev-main
+```
+
+## Usage
+
+See `examples` directory.
