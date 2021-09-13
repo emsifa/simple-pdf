@@ -1,0 +1,25 @@
+{
+    "name": "emsifa/simple-pdf",
+    "homepage": "http://github.com/emsifa/simple-pdf",
+    "description": "PHP Simple PDF Maker, currently its just refactored version of FPDF.",
+    "type": "library",
+    "keywords": ["pdf", "fpdf"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Muhammad Syifa",
+            "email": "emsifa@gmail.com",
+            "homepage": "http://www.emsifa.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Emsifa\\PdfMaker\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.0",
+        "ext-zlib": "*",
+        "ext-gd": "*"
+    }
+}
