@@ -13,6 +13,9 @@ class SimplePdf
 
     const STYLE_BOLD = 'B';
 
+    const ORIENTATION_PORTRAIT = 'P';
+    const ORIENTATION_LANDSCAPE = 'L';
+
     protected $page;                    // current page number
     protected $objectNumber;            // current object number
     protected $offsets;                 // array of object offsets
@@ -126,19 +129,18 @@ class SimplePdf
         $size = $this->_getpagesize($size);
         $this->defaultPageSize = $size;
         $this->currentPageSize = $size;
-        // Page orientation
-        $orientation = strtolower($orientation);
-        if ($orientation == 'p' || $orientation == 'portrait') {
-            $this->defaultOrientation = 'P';
+
+        if ($orientation == static::ORIENTATION_PORTRAIT) {
             $this->width = $size[0];
             $this->height = $size[1];
-        } elseif ($orientation == 'l' || $orientation == 'landscape') {
-            $this->defaultOrientation = 'L';
+        } elseif ($orientation == static::ORIENTATION_LANDSCAPE) {
             $this->width = $size[1];
             $this->height = $size[0];
         } else {
             $this->error('Incorrect orientation: ' . $orientation);
         }
+
+        $this->defaultOrientation = $orientation;
         $this->currentOrientation = $this->defaultOrientation;
         $this->widthPt = $this->width * $this->scaleFactor;
         $this->heightPt = $this->height * $this->scaleFactor;
@@ -1108,7 +1110,7 @@ class SimplePdf
         }
         if ($orientation != $this->currentOrientation || $size[0] != $this->currentPageSize[0] || $size[1] != $this->currentPageSize[1]) {
             // New size or orientation
-            if ($orientation == 'P') {
+            if ($orientation == static::ORIENTATION_PORTRAIT) {
                 $this->width = $size[0];
                 $this->height = $size[1];
             } else {
@@ -1550,7 +1552,7 @@ class SimplePdf
                 if (isset($this->pageInfo[$l[0]]['size'])) {
                     $h = $this->pageInfo[$l[0]]['size'][1];
                 } else {
-                    $h = ($this->defaultOrientation == 'P') ? $this->defaultPageSize[1] * $this->scaleFactor : $this->defaultPageSize[0] * $this->scaleFactor;
+                    $h = ($this->defaultOrientation == static::ORIENTATION_PORTRAIT) ? $this->defaultPageSize[1] * $this->scaleFactor : $this->defaultPageSize[0] * $this->scaleFactor;
                 }
                 $s .= sprintf('/Dest [%d 0 R /XYZ 0 %.2F null]>>', $this->pageInfo[$l[0]]['n'], $h - $l[1] * $this->scaleFactor);
             }
@@ -1584,7 +1586,7 @@ class SimplePdf
         $kids .= ']';
         $this->_put($kids);
         $this->_put('/Count ' . $nb);
-        if ($this->defaultOrientation == 'P') {
+        if ($this->defaultOrientation == static::ORIENTATION_PORTRAIT) {
             $w = $this->defaultPageSize[0];
             $h = $this->defaultPageSize[1];
         } else {
