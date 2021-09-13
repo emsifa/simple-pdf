@@ -21,65 +21,65 @@ class SimplePdf
     const UNIT_CM = 'cm';
     const UNIT_INCH = 'in';
 
-    protected $page;                    // current page number
-    protected $objectNumber;            // current object number
-    protected $offsets;                 // array of object offsets
-    protected $buffer;                  // buffer holding in-memory PDF
-    protected $pages;                   // array containing pages
-    protected $state;                   // current document state
-    protected $compress;                // compression flag
-    protected $scaleFactor;             // scale factor (number of points in user unit)
-    protected $defaultOrientation;      // default orientation
-    protected $currentOrientation;      // current orientation
-    protected $standardPageSize;        // standard page sizes
-    protected $defaultPageSize;         // default page size
-    protected $currentPageSize;         // current page size
-    protected $currentRotation;         // current page rotation
-    protected $pageInfo;                // page-related data
-    protected $widthPt;
-    protected $heightPt;                // dimensions of current page in points
-    protected $width;
-    protected $height;                  // dimensions of current page in user unit
-    protected $leftMargin;              // left margin
-    protected $topMargin;               // top margin
-    protected $rightMargin;             // right margin
-    protected $bottomMargin;            // page break margin
-    protected $cellMargin;              // cell margin
-    protected $x;
-    protected $y;                       // current position in user unit
-    protected $lastHeight;              // height of last printed cell
-    protected $lineWidth;               // line width in user unit
-    protected $fontpath;                // path containing fonts
-    protected $coreFonts;               // array of core font names
-    protected $fonts;                   // array of used fonts
-    protected $fontFiles;               // array of font files
-    protected $encodings;               // array of encodings
-    protected $cmaps;                   // array of ToUnicode CMaps
-    protected $fontFamily;              // current font family
-    protected $fontStyle;               // current font style
-    protected $underline;               // underlining flag
-    protected $currentFont;             // current font info
-    protected $fontSizePt;              // current font size in points
-    protected $fontSize;                // current font size in user unit
-    protected $drawColor;               // commands for drawing color
-    protected $fillColor;               // commands for filling color
-    protected $textColor;               // commands for text color
-    protected $colorFlag;               // indicates whether fill and text colors are different
-    protected $withAlpha;               // indicates whether alpha channel is used
-    protected $wordSpacing;             // word spacing
-    protected $images;                  // array of used images
-    protected $pageLinks;               // array of links in pages
-    protected $links;                   // array of internal links
-    protected $autoPageBreak;           // automatic page breaking
-    protected $pageBreakTrigger;        // threshold used to trigger page breaks
-    protected $inHeader;                // flag set when processing header
-    protected $inFooter;                // flag set when processing footer
-    protected $aliasNbPages;            // alias for total number of pages
-    protected $zoomMode;                // zoom display mode
-    protected $layoutMode;              // layout display mode
-    protected $metadata;                // document properties
-    protected $pdfVersion;              // PDF version number
-    protected $producer = "SimplePDF";
+    protected int $page; // current page number
+    protected int $objectNumber; // current object number
+    protected array $offsets; // array of object offsets
+    protected string $buffer; // buffer holding in-memory PDF
+    protected array $pages; // array containing pages
+    protected int $state; // current document state
+    protected bool $compress; // compression flag
+    protected float $scaleFactor; // scale factor (number of points in user unit)
+    protected string $defaultOrientation; // default orientation
+    protected string $currentOrientation; // current orientation
+    protected array $standardPageSize; // standard page sizes
+    protected array $defaultPageSize; // default page size
+    protected array $currentPageSize; // current page size
+    protected float $currentRotation; // current page rotation
+    protected array $pageInfo; // page-related data
+    protected float $widthPt;
+    protected float $heightPt; // dimensions of current page in points
+    protected float $width;
+    protected float $height; // dimensions of current page in user unit
+    protected float $leftMargin; // left margin
+    protected float $topMargin; // top margin
+    protected float $rightMargin; // right margin
+    protected float $bottomMargin; // page break margin
+    protected float $cellMargin; // cell margin
+    protected float $x;
+    protected float $y; // current position in user unit
+    protected float $lastHeight; // height of last printed cell
+    protected float $lineWidth; // line width in user unit
+    protected string $fontpath; // path containing fonts
+    protected array $coreFonts; // array of core font names
+    protected array $fonts; // array of used fonts
+    protected array $fontFiles; // array of font files
+    protected array $encodings; // array of encodings
+    protected array $cmaps; // array of ToUnicode CMaps
+    protected string $fontFamily; // current font family
+    protected string $fontStyle; // current font style
+    protected bool $underline; // underlining flag
+    protected string $currentFont; // current font info
+    protected float $fontSizePt; // current font size in points
+    protected float $fontSize; // current font size in user unit
+    protected string $drawColor; // commands for drawing color
+    protected string $fillColor; // commands for filling color
+    protected string $textColor; // commands for text color
+    protected bool $colorFlag; // indicates whether fill and text colors are different
+    protected bool $withAlpha; // indicates whether alpha channel is used
+    protected float $wordSpacing; // word spacing
+    protected array $images; // array of used images
+    protected array $pageLinks; // array of links in pages
+    protected array $links; // array of internal links
+    protected bool $autoPageBreak; // automatic page breaking
+    protected float $pageBreakTrigger; // threshold used to trigger page breaks
+    protected bool $inHeader; // flag set when processing header
+    protected bool $inFooter; // flag set when processing footer
+    protected string $aliasNbPages; // alias for total number of pages
+    protected string $zoomMode; // zoom display mode
+    protected string $layoutMode; // layout display mode
+    protected array $metadata; // document properties
+    protected string $pdfVersion; // PDF version number
+    protected string $producer = "SimplePDF";
 
     public function __construct($orientation = 'P', $unit = 'mm', $size = 'A4')
     {
@@ -1075,7 +1075,7 @@ class SimplePdf
         }
     }
 
-    protected function _getpagesize($size)
+    protected function _getpagesize($size): array
     {
         if (is_string($size)) {
             $size = strtolower($size);
