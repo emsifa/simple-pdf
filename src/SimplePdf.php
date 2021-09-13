@@ -21,129 +21,100 @@ class SimplePdf
     const UNIT_CM = 'cm';
     const UNIT_INCH = 'in';
 
-    protected int $page; // current page number
-    protected int $objectNumber; // current object number
-    protected array $offsets; // array of object offsets
-    protected string $buffer; // buffer holding in-memory PDF
-    protected array $pages; // array containing pages
-    protected int $state; // current document state
-    protected bool $compress; // compression flag
-    protected float $scaleFactor; // scale factor (number of points in user unit)
-    protected string $defaultOrientation; // default orientation
-    protected string $currentOrientation; // current orientation
-    protected array $standardPageSize; // standard page sizes
-    protected array $defaultPageSize; // default page size
-    protected array $currentPageSize; // current page size
-    protected float $currentRotation; // current page rotation
-    protected array $pageInfo; // page-related data
-    protected float $widthPt;
-    protected float $heightPt; // dimensions of current page in points
-    protected float $width;
-    protected float $height; // dimensions of current page in user unit
-    protected float $leftMargin; // left margin
-    protected float $topMargin; // top margin
-    protected float $rightMargin; // right margin
-    protected float $bottomMargin; // page break margin
-    protected float $cellMargin; // cell margin
-    protected float $x;
-    protected float $y; // current position in user unit
-    protected float $lastHeight; // height of last printed cell
-    protected float $lineWidth; // line width in user unit
-    protected string $fontpath; // path containing fonts
-    protected array $coreFonts; // array of core font names
-    protected array $fonts; // array of used fonts
-    protected array $fontFiles; // array of font files
-    protected array $encodings; // array of encodings
-    protected array $cmaps; // array of ToUnicode CMaps
-    protected string $fontFamily; // current font family
-    protected string $fontStyle; // current font style
-    protected bool $underline; // underlining flag
-    protected string $currentFont; // current font info
-    protected float $fontSizePt; // current font size in points
-    protected float $fontSize; // current font size in user unit
-    protected string $drawColor; // commands for drawing color
-    protected string $fillColor; // commands for filling color
-    protected string $textColor; // commands for text color
-    protected bool $colorFlag; // indicates whether fill and text colors are different
-    protected bool $withAlpha; // indicates whether alpha channel is used
-    protected float $wordSpacing; // word spacing
-    protected array $images; // array of used images
-    protected array $pageLinks; // array of links in pages
-    protected array $links; // array of internal links
-    protected bool $autoPageBreak; // automatic page breaking
-    protected float $pageBreakTrigger; // threshold used to trigger page breaks
-    protected bool $inHeader; // flag set when processing header
-    protected bool $inFooter; // flag set when processing footer
-    protected string $aliasNbPages; // alias for total number of pages
-    protected string $zoomMode; // zoom display mode
-    protected string $layoutMode; // layout display mode
-    protected array $metadata; // document properties
-    protected string $pdfVersion; // PDF version number
+    protected int $page = 0; // current page number
+    protected int $objectNumber = 0; // current object number
+    protected array $offsets = []; // array of object offsets
+    protected string $buffer = ''; // buffer holding in-memory PDF
+    protected array $pages = []; // array containing pages
+    protected int $state = 0; // current document state
+    protected bool $compress = false; // compression flag
+    protected float $scaleFactor = 0; // scale factor (number of points in user unit)
+    protected string $defaultOrientation = 'P'; // default orientation
+    protected string $currentOrientation = 'P'; // current orientation
+    protected array $standardPageSize = []; // standard page sizes
+    protected array $defaultPageSize = []; // default page size
+    protected array $currentPageSize = []; // current page size
+    protected float $currentRotation = 0; // current page rotation
+    protected array $pageInfo = []; // page-related data
+    protected float $widthPt = 0;
+    protected float $heightPt = 0; // dimensions of current page in points
+    protected float $width = 0;
+    protected float $height = 0; // dimensions of current page in user unit
+    protected float $leftMargin = 0; // left margin
+    protected float $topMargin = 0; // top margin
+    protected float $rightMargin = 0; // right margin
+    protected float $bottomMargin = 0; // page break margin
+    protected float $cellMargin = 0; // cell margin
+    protected float $x = 0;
+    protected float $y = 0; // current position in user unit
+    protected float $lastHeight = 0; // height of last printed cell
+    protected float $lineWidth = 0; // line width in user unit
+    protected string $fontpath = ''; // path containing fonts
+    protected array $coreFonts = ['courier', 'helvetica', 'times', 'symbol', 'zapfdingbats']; // array of core font names
+    protected array $fonts = []; // array of used fonts
+    protected array $fontFiles = []; // array of font files
+    protected array $encodings = []; // array of encodings
+    protected array $cmaps = []; // array of ToUnicode CMaps
+    protected string $fontFamily = ''; // current font family
+    protected string $fontStyle = ''; // current font style
+    protected bool $underline = false; // underlining flag
+    protected array $currentFont = []; // current font info
+    protected float $fontSizePt = 12; // current font size in points
+    protected float $fontSize = 0; // current font size in user unit
+    protected string $drawColor = '0 G'; // commands for drawing color
+    protected string $fillColor = '0 g'; // commands for filling color
+    protected string $textColor = '0 g'; // commands for text color
+    protected bool $colorFlag = false; // indicates whether fill and text colors are different
+    protected bool $withAlpha = false; // indicates whether alpha channel is used
+    protected float $wordSpacing = 0; // word spacing
+    protected array $images = []; // array of used images
+    protected array $pageLinks = []; // array of links in pages
+    protected array $links = []; // array of internal links
+    protected bool $autoPageBreak = true; // automatic page breaking
+    protected float $pageBreakTrigger = 0; // threshold used to trigger page breaks
+    protected bool $inHeader = false; // flag set when processing header
+    protected bool $inFooter = false; // flag set when processing footer
+    protected string $aliasNbPages = ''; // alias for total number of pages
+    protected string $zoomMode = ''; // zoom display mode
+    protected string $layoutMode = ''; // layout display mode
+    protected array $metadata = []; // document properties
+    protected string $pdfVersion = '1.3'; // PDF version number
     protected string $producer = "SimplePDF";
 
     public function __construct($orientation = 'P', $unit = 'mm', $size = 'A4')
     {
         // Some checks
         $this->_dochecks();
-        // Initialization of properties
-        $this->state = static::STATE_NO_PAGE;
-        $this->page = 0;
-        $this->objectNumber = 2;
-        $this->buffer = '';
-        $this->pages = [];
-        $this->pageInfo = [];
-        $this->fonts = [];
-        $this->fontFiles = [];
-        $this->encodings = [];
-        $this->cmaps = [];
-        $this->images = [];
-        $this->links = [];
-        $this->inHeader = false;
-        $this->inFooter = false;
-        $this->lastHeight = 0;
-        $this->fontFamily = '';
-        $this->fontStyle = '';
-        $this->fontSizePt = 12;
-        $this->underline = false;
-        $this->drawColor = '0 G';
-        $this->fillColor = '0 g';
-        $this->textColor = '0 g';
-        $this->colorFlag = false;
-        $this->withAlpha = false;
-        $this->wordSpacing = 0;
-        $this->fontpath = __DIR__ . '/fonts/';
-        $this->coreFonts = array('courier', 'helvetica', 'times', 'symbol', 'zapfdingbats');
 
-        // Scale factor
-        if ($unit == static::UNIT_PT) {
-            $this->scaleFactor = 1;
-        } elseif ($unit == static::UNIT_MM) {
-            $this->scaleFactor = 72 / 25.4;
-        } elseif ($unit == static::UNIT_CM) {
-            $this->scaleFactor = 72 / 2.54;
-        } elseif ($unit == static::UNIT_INCH) {
-            $this->scaleFactor = 72;
-        } else {
-            $this->error('Incorrect unit: ' . $unit);
-        }
+        $this->objectNumber = 2;
+        $this->fontpath = __DIR__ . '/fonts/';
+
+        $this->scaleFactor = match ($unit) {
+            static::UNIT_PT => 1,
+            static::UNIT_MM => 72 / 25.4,
+            static::UNIT_CM => 72 / 2.54,
+            static::UNIT_INCH => 72,
+            default => $this->error("Incorrect unit: {$unit}"),
+        };
+
         // Page sizes
-        $this->standardPageSize = array(
-            'a3' => array(841.89, 1190.55), 'a4' => array(595.28, 841.89), 'a5' => array(420.94, 595.28),
-            'letter' => array(612, 792), 'legal' => array(612, 1008)
-        );
+        $this->standardPageSize = [
+            'a3' => [841.89, 1190.55], 
+            'a4' => [595.28, 841.89], 
+            'a5' => [420.94, 595.28],
+            'letter' => [612, 792], 
+            'legal' => [612, 1008],
+        ];
+
         $size = $this->_getpagesize($size);
         $this->defaultPageSize = $size;
         $this->currentPageSize = $size;
 
-        if ($orientation == static::ORIENTATION_PORTRAIT) {
-            $this->width = $size[0];
-            $this->height = $size[1];
-        } elseif ($orientation == static::ORIENTATION_LANDSCAPE) {
-            $this->width = $size[1];
-            $this->height = $size[0];
-        } else {
-            $this->error('Incorrect orientation: ' . $orientation);
-        }
+        [$this->width, $this->height] = match ($orientation) {
+            static::ORIENTATION_PORTRAIT => [$size[0], $size[1]],
+            static::ORIENTATION_LANDSCAPE => [$size[1], $size[0]],
+            default => $this->error("Incorrect orientation: {$orientation}"),
+        };
 
         $this->defaultOrientation = $orientation;
         $this->currentOrientation = $this->defaultOrientation;
@@ -1039,7 +1010,7 @@ class SimplePdf
     public function save(string $name)
     {
         $this->close();
-        if (! file_put_contents($name, $this->buffer)) {
+        if (!file_put_contents($name, $this->buffer)) {
             $this->error('Unable to create output file: ' . $name);
         }
     }
@@ -1245,10 +1216,11 @@ class SimplePdf
         $ut = $this->currentFont['ut'];
         $w = $this->getStringWidth($txt) + $this->wordSpacing * substr_count($txt, ' ');
         return sprintf(
-            '%.2F %.2F %.2F %.2F re f', 
+            '%.2F %.2F %.2F %.2F re f',
             $x * $this->scaleFactor,
             ($this->height - ($y - $up / 1000 * $this->fontSize)) * $this->scaleFactor,
-            $w * $this->scaleFactor, -$ut / 1000 * $this->fontSizePt,
+            $w * $this->scaleFactor,
+            -$ut / 1000 * $this->fontSizePt,
         );
     }
 
