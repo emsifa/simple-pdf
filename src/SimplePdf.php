@@ -16,6 +16,11 @@ class SimplePdf
     const ORIENTATION_PORTRAIT = 'P';
     const ORIENTATION_LANDSCAPE = 'L';
 
+    const UNIT_PT = 'pt';
+    const UNIT_MM = 'mm';
+    const UNIT_CM = 'cm';
+    const UNIT_INCH = 'in';
+
     protected $page;                    // current page number
     protected $objectNumber;            // current object number
     protected $offsets;                 // array of object offsets
@@ -110,13 +115,13 @@ class SimplePdf
         $this->coreFonts = array('courier', 'helvetica', 'times', 'symbol', 'zapfdingbats');
 
         // Scale factor
-        if ($unit == 'pt') {
+        if ($unit == static::UNIT_PT) {
             $this->scaleFactor = 1;
-        } elseif ($unit == 'mm') {
+        } elseif ($unit == static::UNIT_MM) {
             $this->scaleFactor = 72 / 25.4;
-        } elseif ($unit == 'cm') {
+        } elseif ($unit == static::UNIT_CM) {
             $this->scaleFactor = 72 / 2.54;
-        } elseif ($unit == 'in') {
+        } elseif ($unit == static::UNIT_INCH) {
             $this->scaleFactor = 72;
         } else {
             $this->error('Incorrect unit: ' . $unit);
