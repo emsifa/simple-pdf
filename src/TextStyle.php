@@ -29,15 +29,10 @@ class TextStyle
 
     public function merge(TextStyle $style): self
     {
-        if (is_null($this->color)) {
-            $this->color = $style->getColor();
-        }
-        if (is_null($this->underline)) {
-            $this->underline = $style->getUnderline();
-        }
-        if (is_null($this->size)) {
-            $this->size = $style->getSize();
-        }
-        return $this;
+        return new static(
+            size: $this->getSize() ?: $style->getSize(),
+            color: $this->getColor() ?: $style->getColor(),
+            underline: $this->getUnderline() ?: $style->getUnderline(),
+        );
     }
 }
