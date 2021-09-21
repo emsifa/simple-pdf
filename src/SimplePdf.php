@@ -994,6 +994,7 @@ class SimplePdf
             header('Pragma: public');
         }
         echo $this->buffer;
+        exit;
     }
 
     public function download(string $name, bool $isUTF8 = false)
@@ -1005,6 +1006,7 @@ class SimplePdf
         header('Cache-Control: private, max-age=0, must-revalidate');
         header('Pragma: public');
         echo $this->buffer;
+        exit;
     }
 
     public function save(string $name)
