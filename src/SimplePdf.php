@@ -137,6 +137,9 @@ class SimplePdf
         $this->setCompression(true);
         // Set default PDF version number
         $this->pdfVersion = '1.3';
+
+        $this->addPage();
+        $this->setFont('arial');
     }
 
     public function setMargins($left, $top, $right = null)
