@@ -99,10 +99,10 @@ class SimplePdf
 
         // Page sizes
         $this->standardPageSize = [
-            'a3' => [841.89, 1190.55], 
-            'a4' => [595.28, 841.89], 
+            'a3' => [841.89, 1190.55],
+            'a4' => [595.28, 841.89],
             'a5' => [420.94, 595.28],
-            'letter' => [612, 792], 
+            'letter' => [612, 792],
             'legal' => [612, 1008],
         ];
 
@@ -552,6 +552,38 @@ class SimplePdf
     {
         // Put a link on the page
         $this->pageLinks[$this->page][] = array($x * $this->scaleFactor, $this->heightPt - $y * $this->scaleFactor, $w * $this->scaleFactor, $h * $this->scaleFactor, $link);
+    }
+
+    public function getDefaultTextStyle(): TextStyle
+    {
+        return new TextStyle(
+            color: $this->textColor,
+            size: $this->fontSize,
+            underline: $this->underline,
+        );
+    }
+
+    public function writeText(string $text, float $x = 0, float $y = 0, ?TextStyle $style = null)
+    {
+        $defaultStyle = $this->getDefaultTextStyle();
+        $style = $style ? $style->merge($defaultStyle) : $defaultStyle;
+
+        $this->setFontSize($style->getSize());
+
+        $s = sprintf(
+            'BT %.2F %.2F Td (%s) Tj ET',
+            $x * $this->scaleFactor,
+            ($this->height - $y) * $this->scaleFactor,
+            $this->_escape($text),
+        );
+
+        if ($style->getUnderline() && $text != '') {
+            $s .= ' ' . $this->_dounderline($x, $y, $text);
+        }
+
+        $s = 'q ' . $style->getColor() . ' ' . $s . ' Q';
+
+        $this->_out($s);
     }
 
     public function text($x, $y, $txt)
