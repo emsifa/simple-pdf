@@ -563,8 +563,12 @@ class SimplePdf
         );
     }
 
-    public function writeText(string $text, float $x = 0, float $y = 0, ?TextStyle $style = null)
+    public function writeText(?string $text, float $x = 0, float $y = 0, ?TextStyle $style = null)
     {
+        if (is_null($text)) {
+            $text = "";
+        }
+
         $defaultStyle = $this->getDefaultTextStyle();
         $style = $style ? $style->merge($defaultStyle) : $defaultStyle;
 
